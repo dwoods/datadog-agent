@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	python "github.com/sbinet/go-python"
+	python "github.com/DataDog/go-python3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 

@@ -13,7 +13,7 @@ import (
 	"runtime"
 	"time"
 
-	python "github.com/sbinet/go-python"
+	python "github.com/DataDog/go-python3"
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/DataDog/datadog-agent/pkg/aggregator"

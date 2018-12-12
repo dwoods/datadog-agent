@@ -18,7 +18,7 @@ import (
 	"github.com/DataDog/datadog-agent/pkg/util/executable"
 	"github.com/DataDog/datadog-agent/pkg/util/log"
 
-	python "github.com/sbinet/go-python"
+	python "github.com/DataDog/go-python3"
 )
 
 // #include <Python.h>

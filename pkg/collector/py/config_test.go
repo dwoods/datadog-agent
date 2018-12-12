@@ -16,7 +16,7 @@ import (
 
 	"github.com/DataDog/datadog-agent/pkg/autodiscovery/integration"
 	"github.com/mitchellh/reflectwalk"
-	"github.com/sbinet/go-python"
+	"github.com/DataDog/go-python3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 

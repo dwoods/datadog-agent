@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/reflectwalk"
-	python "github.com/sbinet/go-python"
+	python "github.com/DataDog/go-python3"
 )
 
 // we use this struct to walk through YAML results and convert them to Python stuff

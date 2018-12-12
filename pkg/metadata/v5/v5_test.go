@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/DataDog/datadog-agent/pkg/collector/py"
-	python "github.com/sbinet/go-python"
+	python "github.com/DataDog/go-python3"
 	"github.com/stretchr/testify/assert"
 )
 
