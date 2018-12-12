@@ -153,12 +153,12 @@ func findSubclassOf(base, module *python.PyObject, gstate *stickyLock) (*python.
 
 	// baseClass is not a Class type
 	if !python.PyType_Check(base) {
-		return nil, fmt.Errorf("%s is not of Class type", python.PyString_AS_STRING(base.Str()))
+		return nil, fmt.Errorf("%s is not of Class type", python.PyUnicode_AsUTF8(base.Str()))
 	}
 
 	// module is not a Module object
 	if !python.PyModule_Check(module) {
-		return nil, fmt.Errorf("%s is not a Module object", python.PyString_AS_STRING(module.Str()))
+		return nil, fmt.Errorf("%s is not a Module object", python.PyUnicode_AsUTF8(module.Str()))
 	}
 
 	dir := module.PyObject_Dir()
@@ -196,7 +196,7 @@ func findSubclassOf(base, module *python.PyObject, gstate *stickyLock) (*python.
 		}
 
 		// does `class` have subclasses?
-		subclasses := class.CallMethod("__subclasses__")
+		subclasses := class.CallMethodArgs("__subclasses__")
 		if subclasses == nil {
 			pyErr, err := gstate.getPythonError()
 
@@ -220,7 +220,7 @@ func findSubclassOf(base, module *python.PyObject, gstate *stickyLock) (*python.
 	}
 
 	return nil, fmt.Errorf("cannot find a subclass of %s in module %s",
-		python.PyString_AS_STRING(base.Str()), python.PyString_AS_STRING(module.Str()))
+		python.PyUnicode_AsUTF8(base.Str()), python.PyUnicode_AsUTF8(module.Str()))
 }
 
 // Get the rightmost component of a module path like foo.bar.baz

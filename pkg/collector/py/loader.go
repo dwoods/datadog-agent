@@ -124,8 +124,8 @@ func (cl *PythonCheckLoader) Load(config integration.Config) ([]check.Check, err
 		wheelVersionPy := checkModule.GetAttrString("__version__")
 		if wheelVersionPy != nil {
 			defer wheelVersionPy.DecRef()
-			if python.PyString_Check(wheelVersionPy) {
-				wheelVersion = python.PyString_AS_STRING(wheelVersionPy.Str())
+			if python.PyUnicode_Check(wheelVersionPy) {
+				wheelVersion = python.PyUnicode_AsUTF8(wheelVersionPy.Str())
 			} else {
 				// This should never happen. If the check is a custom one
 				// (a simple .py file dropped in the check.d folder) it does
@@ -145,7 +145,7 @@ func (cl *PythonCheckLoader) Load(config integration.Config) ([]check.Check, err
 					pyTypeStr := pyType.Str()
 					if pyTypeStr != nil {
 						defer pyTypeStr.DecRef()
-						typeName = python.PyString_AS_STRING(pyTypeStr)
+						typeName = python.PyUnicode_AsUTF8(pyTypeStr)
 					}
 				}
 

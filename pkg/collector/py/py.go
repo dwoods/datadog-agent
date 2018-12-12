@@ -100,7 +100,7 @@ func Initialize(paths ...string) *python.PyThreadState {
 
 	// store the Python path
 	if pyList := python.PySys_GetObject("path"); pyList != nil {
-		PythonPath = python.PyString_AS_STRING(pyList.Str())
+		PythonPath = python.PyUnicode_AsUTF8(pyList.Str())
 	}
 
 	// We acquired the GIL as a side effect of threading initialization (see above)

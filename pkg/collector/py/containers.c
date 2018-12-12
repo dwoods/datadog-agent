@@ -38,11 +38,23 @@ static PyMethodDef containersMethods[] = {
   {NULL, NULL}  // guards
 };
 
+static struct PyModuleDef containersDef = {
+  PyModuleDef_HEAD_INIT,
+  "containers",        /* m_name */
+  "containers module", /* m_doc */
+  -1,                  /* m_size */
+  containersMethods,   /* m_methods */
+  NULL,                /* m_reload */
+  NULL,                /* m_traverse */
+  NULL,                /* m_clear */
+  NULL,                /* m_free */
+};
+
 void initcontainers() {
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
-  PyObject *ku = Py_InitModule("containers", containersMethods);
+  PyObject *ku = PyModule_Create(&containersDef);
 
   PyGILState_Release(gstate);
 }

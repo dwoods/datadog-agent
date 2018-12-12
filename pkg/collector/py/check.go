@@ -63,7 +63,7 @@ func (c *PythonCheck) Run() error {
 	log.Debugf("Running python check %s %s", c.ModuleName, c.id)
 	emptyTuple := python.PyTuple_New(0)
 	defer emptyTuple.DecRef()
-	result := c.instance.CallMethod("run", emptyTuple)
+	result := c.instance.CallMethodArgs("run", emptyTuple)
 	log.Debugf("Run returned for %s %s", c.ModuleName, c.id)
 	if result == nil {
 		pyErr, err := gstate.getPythonError()
@@ -101,7 +101,7 @@ func (c *PythonCheck) RunSimple() error {
 	emptyTuple := python.PyTuple_New(0)
 	defer emptyTuple.DecRef()
 
-	result := c.instance.CallMethod("run", emptyTuple)
+	result := c.instance.CallMethodArgs("run", emptyTuple)
 	log.Debugf("Run returned for %s %s", c.ModuleName, c.id)
 	if result == nil {
 		pyErr, err := gstate.getPythonError()
@@ -148,7 +148,7 @@ func (c *PythonCheck) getPythonWarnings(gstate *stickyLock) []error {
 	warnings := []error{}
 	emptyTuple := python.PyTuple_New(0)
 	defer emptyTuple.DecRef()
-	ws := c.instance.CallMethod("get_warnings", emptyTuple)
+	ws := c.instance.CallMethodArgs("get_warnings", emptyTuple)
 	if ws == nil {
 		pyErr, err := gstate.getPythonError()
 		if err != nil {

@@ -22,7 +22,7 @@ PyObject* GetHostname(PyObject *self, PyObject *args);
 PyObject* GetClusterName(PyObject *self, PyObject *args);
 PyObject* LogMessage(char *message, int logLevel);
 PyObject* GetConfig(char *key);
-PyObject* GetSubprocessOutput(char **args, int argc, int raise);
+PyObject* GetSubprocessOutput(const char **args, int argc, int raise);
 PyObject* SetExternalTags(const char *hostname, const char *source_type, char **tags, int tags_s);
 
 // Exceptions
@@ -64,7 +64,7 @@ static PyObject *get_subprocess_output(PyObject *self, PyObject *args) {
     PyObject *cmd_args, *cmd_raise_on_empty;
     int raise = 1, i=0;
     int subprocess_args_sz;
-    char ** subprocess_args, * subprocess_arg;
+    const char ** subprocess_args, * subprocess_arg;
     PyObject *py_result;
 
     PyGILState_STATE gstate = PyGILState_Ensure();
@@ -92,7 +92,7 @@ static PyObject *get_subprocess_output(PyObject *self, PyObject *args) {
     }
 
     subprocess_args_sz = PyList_Size(cmd_args);
-    if(!(subprocess_args = (char **)malloc(sizeof(char *)*subprocess_args_sz))) {
+    if(!(subprocess_args = (const char **)malloc(sizeof(const char *)*subprocess_args_sz))) {
         PyErr_SetString(PyExc_MemoryError, "unable to allocate memory, bailing out");
         PyGILState_Release(gstate);
         return NULL;
@@ -193,13 +193,13 @@ static PyObject *set_external_tags(PyObject *self, PyObject *args) {
                 continue;
             }
 
-            char *tag = PyUnicode_AsUTF8(s);
+            Py_ssize_t len = 0;
+            const char *tag = PyUnicode_AsUTF8AndSize(s, &len);
             if (tag == NULL) {
                 continue;
             }
 
-            int len = PyString_Size(s) + 1;
-            tags[actual_size] = (char*)malloc(sizeof(char)*len);
+            tags[actual_size] = (char*)malloc(sizeof(char)*len+1);
             if (!tags[actual_size]) {
                 // cleanup
                 int k;
@@ -241,6 +241,18 @@ static PyMethodDef datadogAgentMethods[] = {
   {NULL, NULL}
 };
 
+static struct PyModuleDef datadogAgentDef = {
+  PyModuleDef_HEAD_INIT,
+  "datadog_agent",        /* m_name */
+  "datadog_agent module", /* m_doc */
+  -1,                     /* m_size */
+  datadogAgentMethods,    /* m_methods */
+  NULL,                   /* m_reload */
+  NULL,                   /* m_traverse */
+  NULL,                   /* m_clear */
+  NULL,                   /* m_free */
+};
+
 /*
  * Util package emulate the features within 'util' from agent5. It is
  * deprecated in favor of 'datadog_agent' package.
@@ -248,6 +260,18 @@ static PyMethodDef datadogAgentMethods[] = {
 static PyMethodDef utilMethods[] = {
   {"headers", (PyCFunction)Headers, METH_VARARGS | METH_KEYWORDS, "Get basic HTTP headers with the right UserAgent."},
   {NULL, NULL}
+};
+
+static struct PyModuleDef utilDef = {
+  PyModuleDef_HEAD_INIT,
+  "util",        /* m_name */
+  "util module", /* m_doc */
+  -1,            /* m_size */
+  utilMethods,   /* m_methods */
+  NULL,          /* m_reload */
+  NULL,          /* m_traverse */
+  NULL,          /* m_clear */
+  NULL,          /* m_free */
 };
 
 /*
@@ -261,14 +285,26 @@ static PyMethodDef _utilMethods[] = {
   {NULL, NULL}
 };
 
+static struct PyModuleDef _utilDef = {
+  PyModuleDef_HEAD_INIT,
+  "_util",        /* m_name */
+  "_util module", /* m_doc */
+  -1,             /* m_size */
+  _utilMethods,   /* m_methods */
+  NULL,           /* m_reload */
+  NULL,           /* m_traverse */
+  NULL,           /* m_clear */
+  NULL,           /* m_free */
+};
+
 void initdatadogagent()
 {
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
-  PyObject *da = Py_InitModule("datadog_agent", datadogAgentMethods);
-  PyObject *util = Py_InitModule("util", utilMethods);
-  PyObject *_util = Py_InitModule("_util", _utilMethods);
+  PyObject *da = PyModule_Create(&datadogAgentDef);
+  PyObject *util = PyModule_Create(&utilDef);
+  PyObject *_util = PyModule_Create(&_utilDef);
 
   SubprocessOutputEmptyError = PyErr_NewException("_util.SubprocessOutputEmptyError", NULL, NULL);
   Py_INCREF(SubprocessOutputEmptyError);

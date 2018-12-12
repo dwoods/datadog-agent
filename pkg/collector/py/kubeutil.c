@@ -15,12 +15,24 @@ static PyMethodDef kubeutilMethods[] = {
   {NULL, NULL}
 };
 
+static struct PyModuleDef kubeutilDef = {
+  PyModuleDef_HEAD_INIT,
+  "kubeutil",        /* m_name */
+  "kubeutil module", /* m_doc */
+  -1,                /* m_size */
+  kubeutilMethods,   /* m_methods */
+  NULL,              /* m_reload */
+  NULL,              /* m_traverse */
+  NULL,              /* m_clear */
+  NULL,              /* m_free */
+};
+
 void initkubeutil()
 {
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
-  PyObject *ku = Py_InitModule("kubeutil", kubeutilMethods);
+  PyObject *ku = PyModule_Create(&kubeutilDef);
 
   PyGILState_Release(gstate);
 }

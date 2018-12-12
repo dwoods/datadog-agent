@@ -31,12 +31,24 @@ static PyMethodDef taggerMethods[] = {
   {NULL, NULL}
 };
 
+static struct PyModuleDef taggerDef = {
+  PyModuleDef_HEAD_INIT,
+  "tagger",        /* m_name */
+  "tagger module", /* m_doc */
+  -1,              /* m_size */
+  taggerMethods,   /* m_methods */
+  NULL,            /* m_reload */
+  NULL,            /* m_traverse */
+  NULL,            /* m_clear */
+  NULL,            /* m_free */
+};
+
 void inittagger()
 {
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
-  PyObject *tagger = Py_InitModule("tagger", taggerMethods);
+  PyObject *tagger = PyModule_Create(&taggerDef);
 
   PyGILState_Release(gstate);
 }

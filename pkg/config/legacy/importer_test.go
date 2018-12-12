@@ -38,9 +38,9 @@ func TestGetAgentConfig(t *testing.T) {
 	value := new(python.PyObject)
 	var pos = 0
 	for python.PyDict_Next(agentConfigPy, &pos, &key, &value) {
-		keyStr := python.PyString_AS_STRING(key.Str())
+		keyStr := python.PyUnicode_AsUTF8(key.Str())
 
-		valueStr := python.PyString_AS_STRING(value.Str())
+		valueStr := python.PyUnicode_AsUTF8(value.Str())
 
 		goValue, found := agentConfigGo[keyStr]
 		// histogram_aggregates value was converted from string to list

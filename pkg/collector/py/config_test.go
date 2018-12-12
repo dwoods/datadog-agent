@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/DataDog/datadog-agent/pkg/autodiscovery/integration"
-	"github.com/mitchellh/reflectwalk"
 	"github.com/DataDog/go-python3"
+	"github.com/mitchellh/reflectwalk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -134,7 +134,7 @@ func TestToPythonString(t *testing.T) {
 	gstate := newStickyLock()
 	defer gstate.unlock()
 
-	assert.True(t, python.PyString_Check(res), "Result is not a Python string")
+	assert.True(t, python.PyUnicode_Check(res), "Result is not a Python string")
 }
 
 func TestToPythonDuration(t *testing.T) {
@@ -285,7 +285,7 @@ func TestIfToPy(t *testing.T) {
 
 	i = "Snafu"
 	val = ifToPy(reflect.ValueOf(i))
-	if !python.PyString_Check(val) {
+	if !python.PyUnicode_Check(val) {
 		t.Fatalf("Return value is not a string")
 	}
 

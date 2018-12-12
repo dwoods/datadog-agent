@@ -91,6 +91,18 @@ static PyMethodDef AggMethods[] = {
   {NULL, NULL}  // guards
 };
 
+static struct PyModuleDef aggregatorDef = {
+  PyModuleDef_HEAD_INIT,
+  "aggregator",        /* m_name */
+  "aggregator module", /* m_doc */
+  -1,                  /* m_size */
+  AggMethods,          /* m_methods */
+  NULL,                /* m_reload */
+  NULL,                /* m_traverse */
+  NULL,                /* m_clear */
+  NULL,                /* m_free */
+};
+
 PyObject* _none() {
 	Py_RETURN_NONE;
 }
@@ -108,7 +120,7 @@ void initaggregator()
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
-  PyObject *m = Py_InitModule("aggregator", AggMethods);
+  PyObject *m = PyModule_Create(&aggregatorDef);
 
   int i;
   for (i=MT_FIRST; i<=MT_LAST; i++) {
@@ -122,12 +134,12 @@ int _PyDict_Check(PyObject *o) {
   return PyDict_Check(o);
 }
 
-int _PyInt_Check(PyObject *o) {
-  return PyInt_Check(o);
+int _PyLong_Check(PyObject *o) {
+  return PyLong_Check(o);
 }
 
-int _PyString_Check(PyObject *o) {
-  return PyString_Check(o);
+int _PyUnicode_Check(PyObject *o) {
+  return PyUnicode_Check(o);
 }
 
 PyObject* _PyObject_Repr(PyObject *o)
