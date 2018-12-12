@@ -146,7 +146,7 @@ func TestSubprocessBindings(t *testing.T) {
 		// Return Code
 		retcode := python.PyTuple_GetItem(res, 2)
 		assert.NotNil(t, retcode)
-		assert.Zero(t, python.PyInt_AsLong(retcode))
+		assert.Zero(t, python.PyLong_AsLong(retcode))
 	}
 }
 

@@ -82,11 +82,11 @@ func TestToPythonInt(t *testing.T) {
 	gstate := newStickyLock()
 	defer gstate.unlock()
 
-	assert.True(t, python.PyInt_Check(res), "Result is not a Python dict")
+	assert.True(t, python.PyLong_Check(res), "Result is not a Python dict")
 
 	res, err = ToPython(&b)
 	require.Nil(t, err, "Expected empty error message")
-	assert.True(t, python.PyInt_Check(res), "Result is not a Python dict")
+	assert.True(t, python.PyLong_Check(res), "Result is not a Python dict")
 }
 
 func TestToPythonfloat(t *testing.T) {
@@ -148,7 +148,7 @@ func TestToPythonDuration(t *testing.T) {
 	gstate := newStickyLock()
 	defer gstate.unlock()
 
-	assert.True(t, python.PyInt_Check(res), "Result is not a Python string")
+	assert.True(t, python.PyLong_Check(res), "Result is not a Python string")
 }
 
 func TestWalkerPush(t *testing.T) {
@@ -279,7 +279,7 @@ func TestIfToPy(t *testing.T) {
 
 	i = 42
 	val := ifToPy(reflect.ValueOf(i))
-	if !python.PyInt_Check(val) {
+	if !python.PyLong_Check(val) {
 		t.Fatalf("Return value is not int")
 	}
 
