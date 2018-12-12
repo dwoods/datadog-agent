@@ -139,7 +139,7 @@ func TestSubprocessBindings(t *testing.T) {
 		assert.True(t, python.PyTuple_Check(res))
 		pyOutput := python.PyTuple_GetItem(res, 0)
 		assert.NotNil(t, pyOutput)
-		output := python.PyString_AsString(pyOutput)
+		output := python.PyUnicode_AsUTF8(pyOutput)
 		assert.NotZero(t, len(output))
 		t.Logf("command output was: %v", output)
 

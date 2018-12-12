@@ -11,8 +11,8 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/mitchellh/reflectwalk"
 	python "github.com/DataDog/go-python3"
+	"github.com/mitchellh/reflectwalk"
 )
 
 // we use this struct to walk through YAML results and convert them to Python stuff
@@ -142,15 +142,15 @@ func ifToPy(v reflect.Value) *python.PyObject {
 	case string:
 		pyval = python.PyString_FromString(s)
 	case int:
-		pyval = python.PyInt_FromLong(int(s))
+		pyval = python.PyLong_FromLong(int(s))
 	case int32:
-		pyval = python.PyInt_FromLong(int(s))
+		pyval = python.PyLong_FromLong(int(s))
 	case int64:
 		// This will only works on 64bit host. Since we don't offer 32bit build it's fine
-		pyval = python.PyInt_FromLong(int(s))
+		pyval = python.PyLong_FromLong(int(s))
 	case time.Duration:
 		// This will only works on 64bit host. Since we don't offer 32bit build it's fine
-		pyval = python.PyInt_FromLong(int(s))
+		pyval = python.PyLong_FromLong(int(s))
 	case float32:
 		pyval = python.PyFloat_FromDouble(float64(s))
 	case float64:

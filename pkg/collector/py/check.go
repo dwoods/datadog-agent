@@ -84,7 +84,7 @@ func (c *PythonCheck) Run() error {
 	// grab the warnings and add them to the struct
 	c.lastWarnings = c.getPythonWarnings(gstate)
 
-	var resultStr = python.PyString_AsString(result)
+	var resultStr = python.PyUnicode_AsUTF8(result)
 	if resultStr == "" {
 		return nil
 	}
@@ -113,7 +113,7 @@ func (c *PythonCheck) RunSimple() error {
 	defer result.DecRef()
 
 	c.lastWarnings = c.getPythonWarnings(gstate)
-	var resultStr = python.PyString_AsString(result)
+	var resultStr = python.PyUnicode_AsUTF8(result)
 	if resultStr == "" {
 		return nil
 	}
@@ -162,7 +162,7 @@ func (c *PythonCheck) getPythonWarnings(gstate *stickyLock) []error {
 	idx := 0
 	for idx < numWarnings {
 		w := python.PyList_GetItem(ws, idx) // borrowed ref
-		warnings = append(warnings, fmt.Errorf("%v", python.PyString_AsString(w)))
+		warnings = append(warnings, fmt.Errorf("%v", python.PyUnicode_AsUTF8(w)))
 		idx++
 	}
 	return warnings

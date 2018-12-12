@@ -99,7 +99,7 @@ static PyObject *get_subprocess_output(PyObject *self, PyObject *args) {
     }
 
     for (i = 0; i < subprocess_args_sz; i++) {
-        subprocess_arg = PyString_AsString(PyList_GetItem(cmd_args, i));
+        subprocess_arg = PyUnicode_AsUTF8(PyList_GetItem(cmd_args, i));
         if (subprocess_arg == NULL) {
             PyErr_SetString(PyExc_Exception, "unable to parse arguments to cgo/go-land");
             free(subprocess_args);
@@ -152,7 +152,7 @@ static PyObject *set_external_tags(PyObject *self, PyObject *args) {
         }
 
         // first elem is the hostname
-        const char *hostname = PyString_AsString(PyTuple_GetItem(tuple, 0));
+        const char *hostname = PyUnicode_AsUTF8(PyTuple_GetItem(tuple, 0));
         // second is a dictionary
         PyObject *dict = PyTuple_GetItem(tuple, 1);
         if (!PyDict_Check(dict)) {
@@ -169,7 +169,7 @@ static PyObject *set_external_tags(PyObject *self, PyObject *args) {
         }
 
         // key is the source type (e.g. 'vsphere') value is the list of tags
-        const char *source_type = PyString_AsString(key);
+        const char *source_type = PyUnicode_AsUTF8(key);
         if (!PyList_Check(value)) {
             PyErr_SetString(PyExc_TypeError, "dict value must be a list of tags ");
             PyGILState_Release(gstate);
@@ -193,7 +193,7 @@ static PyObject *set_external_tags(PyObject *self, PyObject *args) {
                 continue;
             }
 
-            char *tag = PyString_AsString(s);
+            char *tag = PyUnicode_AsUTF8(s);
             if (tag == NULL) {
                 continue;
             }

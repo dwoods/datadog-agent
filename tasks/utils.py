@@ -70,9 +70,9 @@ def get_build_flags(ctx, static=False, use_embedded_libs=False):
         ldflags += "-s -w -linkmode=external '-extldflags=-static' "
         #env["CGO_ENABLED"] = "0"
     elif use_embedded_libs:
-        embedded_lib_path = ctx.run("pkg-config --variable=libdir python-2.7",
+        embedded_lib_path = ctx.run("pkg-config --variable=libdir python-3.7",
                                     env=env, hide=True).stdout.strip()
-        embedded_prefix = ctx.run("pkg-config --variable=prefix python-2.7",
+        embedded_prefix = ctx.run("pkg-config --variable=prefix python-3.7",
                                   env=env, hide=True).stdout.strip()
         ldflags += "-X {}/pkg/collector/py.pythonHome={} ".format(REPO_PATH, embedded_prefix)
         ldflags += "-r {} ".format(embedded_lib_path)

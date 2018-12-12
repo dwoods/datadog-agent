@@ -64,8 +64,8 @@ func TestToPython(t *testing.T) {
 	same := res.RichCompareBool(d, python.Py_EQ)
 	if same < 1 {
 		t.Fatalf("Result and template dict must be the same:\n Result: %s\n Template: %s",
-			python.PyString_AsString(res.Str()),
-			python.PyString_AsString(d.Str()))
+			python.PyUnicode_AsUTF8(res.Str()),
+			python.PyUnicode_AsUTF8(d.Str()))
 	}
 }
 

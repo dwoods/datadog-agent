@@ -25,7 +25,7 @@ import (
 	"github.com/DataDog/datadog-agent/pkg/version"
 )
 
-// #cgo pkg-config: python-2.7
+// #cgo pkg-config: python-3.7
 // #cgo linux CFLAGS: -std=gnu99
 // #include "api.h"
 // #include "datadog_agent.h"
@@ -270,7 +270,7 @@ func GetSubprocessOutput(argv **C.char, argc, raise int) *C.PyObject {
 	cOutputErr := C.CString(string(outputErr[:]))
 	pyOutputErr := C.PyString_FromString(cOutputErr)
 	C.free(unsafe.Pointer(cOutputErr))
-	pyRetCode := C.PyInt_FromLong(C.long(retCode))
+	pyRetCode := C.PyLong_FromLong(C.long(retCode))
 
 	pyResult := C.PyTuple_New(3)
 	C.PyTuple_SetItem(pyResult, 0, pyOutput)

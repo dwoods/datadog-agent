@@ -7,7 +7,7 @@
 
 package py
 
-// #cgo pkg-config: python-2.7
+// #cgo pkg-config: python-3.7
 // #cgo linux CFLAGS: -std=gnu99
 // #include "tagger.h"
 import "C"

@@ -112,7 +112,7 @@ func (sl *stickyLock) getPythonError() (string, error) {
 				tracebackString := ""
 				// "format_exception" return a list of strings (one per line)
 				for i := 0; i < python.PyList_Size(pyFormattedExc); i++ {
-					tracebackString = tracebackString + python.PyString_AsString(python.PyList_GetItem(pyFormattedExc, i))
+					tracebackString = tracebackString + python.PyUnicode_AsUTF8(python.PyList_GetItem(pyFormattedExc, i))
 				}
 				return tracebackString, nil
 			}
@@ -127,7 +127,7 @@ func (sl *stickyLock) getPythonError() (string, error) {
 		strPvalue := pvalue.Str()
 		if strPvalue != nil {
 			defer strPvalue.DecRef()
-			return python.PyString_AsString(strPvalue), nil
+			return python.PyUnicode_AsUTF8(strPvalue), nil
 		}
 	}
 
@@ -135,7 +135,7 @@ func (sl *stickyLock) getPythonError() (string, error) {
 		strPtype := ptype.Str()
 		if strPtype != nil {
 			defer strPtype.DecRef()
-			return python.PyString_AsString(strPtype), nil
+			return python.PyUnicode_AsUTF8(strPtype), nil
 		}
 	}
 
@@ -165,7 +165,7 @@ func findSubclassOf(base, module *python.PyObject, gstate *stickyLock) (*python.
 	defer dir.DecRef()
 	var class *python.PyObject
 	for i := 0; i < python.PyList_GET_SIZE(dir); i++ {
-		symbolName := python.PyString_AsString(python.PyList_GetItem(dir, i))
+		symbolName := python.PyUnicode_AsUTF8(python.PyList_GetItem(dir, i))
 		class = module.GetAttrString(symbolName) // new ref, don't DecRef because we return it (caller is owner)
 
 		if class == nil {
@@ -288,7 +288,7 @@ func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
 	myPythonStats := []*PythonStats{}
 	var entry *python.PyObject
 	for i := 0; i < python.PyList_GET_SIZE(keys); i++ {
-		entryName := python.PyString_AsString(python.PyList_GetItem(keys, i))
+		entryName := python.PyUnicode_AsUTF8(python.PyList_GetItem(keys, i))
 		entry = python.PyDict_GetItemString(stats, entryName)
 		if entry == nil {
 			pyErr, err := glock.getPythonError()
@@ -394,7 +394,7 @@ func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
 			}
 
 			pyEntry := &PythonStatsEntry{
-				Reference: python.PyString_AsString(obj),
+				Reference: python.PyUnicode_AsUTF8(obj),
 				NObjects:  python.PyInt_AsLong(nEntry),
 				Size:      python.PyInt_AsLong(szEntry),
 			}
@@ -447,7 +447,7 @@ func GetPythonIntegrationList() ([]string, error) {
 
 	ddPythonPackages := []string{}
 	for i := 0; i < python.PyList_Size(packages); i++ {
-		pkgName := python.PyString_AsString(python.PyList_GetItem(packages, i))
+		pkgName := python.PyUnicode_AsUTF8(python.PyList_GetItem(packages, i))
 		if pkgName == "checks_base" {
 			continue
 		}
