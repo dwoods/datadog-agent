@@ -307,7 +307,7 @@ func TestMapElem(t *testing.T) {
 		t.Fatalf("Expected key value foo, found %s", w.lastKey)
 	}
 
-	pkey := python.PyString_FromString(w.lastKey)
+	pkey := python.PyUnicode_FromString(w.lastKey)
 	ok, _ := python.PyDict_Contains(w.currentContainer, pkey)
 	if !ok {
 		t.Fatalf("Key not found in dictionary")

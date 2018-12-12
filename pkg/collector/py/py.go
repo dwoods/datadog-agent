@@ -83,7 +83,7 @@ func Initialize(paths ...string) *python.PyThreadState {
 	if len(paths) > 0 {
 		path := python.PySys_GetObject("path") // borrowed ref
 		for _, p := range paths {
-			newPath := python.PyString_FromString(p)
+			newPath := python.PyUnicode_FromString(p)
 			defer newPath.DecRef()
 			python.PyList_Append(path, newPath)
 		}

@@ -475,7 +475,7 @@ func SetPythonPsutilProcPath(procPath string) error {
 	}
 	defer psutilModule.DecRef()
 
-	pyProcPath := python.PyString_FromString(procPath)
+	pyProcPath := python.PyUnicode_FromString(procPath)
 	defer pyProcPath.DecRef()
 
 	ret := psutilModule.SetAttrString(ns[1], pyProcPath)

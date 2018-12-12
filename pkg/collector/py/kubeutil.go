@@ -57,12 +57,12 @@ func GetKubeletConnectionInfo() *C.PyObject {
 
 	for k, v := range creds {
 		cKey := C.CString(k)
-		pyKey := C.PyString_FromString(cKey)
+		pyKey := C.PyUnicode_FromString(cKey)
 		defer C.Py_DecRef(pyKey)
 		C.free(unsafe.Pointer(cKey))
 
 		cVal := C.CString(v)
-		pyVal := C.PyString_FromString(cVal)
+		pyVal := C.PyUnicode_FromString(cVal)
 		defer C.Py_DecRef(pyVal)
 		C.free(unsafe.Pointer(cVal))
 

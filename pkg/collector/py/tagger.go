@@ -33,7 +33,7 @@ func GetTags(id *C.char, highCard int) *C.PyObject {
 
 	for _, t := range tags {
 		cTag := C.CString(t)
-		pyTag := C.PyString_FromString(cTag)
+		pyTag := C.PyUnicode_FromString(cTag)
 		defer C.Py_DecRef(pyTag)
 		C.free(unsafe.Pointer(cTag))
 		C.PyList_Append(output, pyTag)

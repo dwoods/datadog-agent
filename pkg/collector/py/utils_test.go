@@ -109,9 +109,9 @@ func TestSubprocessBindings(t *testing.T) {
 
 	cmdList := python.PyList_New(0)
 	defer cmdList.DecRef()
-	cmd := python.PyString_FromString("ls")
+	cmd := python.PyUnicode_FromString("ls")
 	defer cmd.DecRef()
-	arg := python.PyString_FromString("-l")
+	arg := python.PyUnicode_FromString("-l")
 	defer arg.DecRef()
 
 	err := python.PyList_Insert(cmdList, 0, cmd)

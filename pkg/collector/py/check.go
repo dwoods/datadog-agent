@@ -273,7 +273,7 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 
 		// Add new 'agentConfig' key to the dict...
 		gstate := newStickyLock()
-		key := python.PyString_FromString("agentConfig")
+		key := python.PyUnicode_FromString("agentConfig")
 		defer key.DecRef()
 		python.PyDict_SetItem(kwargs, key, agentConfig)
 		gstate.unlock()
@@ -290,7 +290,7 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 
 	// The Check ID is set in Python so that the python check
 	// can use it afterwards to submit to the proper sender in the aggregator
-	pyID := python.PyString_FromString(string(c.ID()))
+	pyID := python.PyUnicode_FromString(string(c.ID()))
 	defer pyID.DecRef()
 	instance.SetAttrString("check_id", pyID)
 
