@@ -13,7 +13,7 @@ import (
 
 	"github.com/DataDog/datadog-agent/pkg/collector/py"
 	"github.com/DataDog/datadog-agent/pkg/config"
-	"github.com/sbinet/go-python"
+	python "github.com/DataDog/go-python3"
 )
 
 func main() {

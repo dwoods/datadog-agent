@@ -14,7 +14,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/sbinet/go-python"
+	python "github.com/sbinet/go-python"
 
 	"github.com/DataDog/datadog-agent/pkg/util/log"
 )
