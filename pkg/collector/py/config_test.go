@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/DataDog/datadog-agent/pkg/autodiscovery/integration"
-	"github.com/DataDog/go-python3"
+	python "github.com/DataDog/go-python3"
 	"github.com/mitchellh/reflectwalk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

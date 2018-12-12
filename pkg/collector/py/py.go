@@ -31,10 +31,6 @@ var (
 	// The pythonHome variable typically comes from -ldflags
 	// it's needed in case the agent was built using embedded libs
 	pythonHome = ""
-	// see https://docs.python.org/2/c-api/init.html#c.Py_SetPythonHome
-	// we should keep around the char* string we use to set the Python
-	// Home through cgo until the program exits.
-	pPythonHome *C.char
 	// PythonHome contains the computed value of the Python Home path once the
 	// intepreter is created. It might be empty in case the interpreter wasn't
 	// initialized, or the Agent was built using system libs and the env var
@@ -54,7 +50,7 @@ func Initialize(paths ...string) *python.PyThreadState {
 	setPythonHome()
 
 	// store the final value of Python Home in the cache
-	PythonHome = C.GoString(C.Py_GetPythonHome())
+	PythonHome, _ = python.Py_GetPythonHome()
 
 	// Start the interpreter
 	if C.Py_IsInitialized() == 0 {
@@ -138,9 +134,7 @@ func setPythonHome() {
 		}
 	}
 
-	// set the python path
-	pPythonHome := C.CString(pythonHome)
-	C.Py_SetPythonHome(pPythonHome)
+	python.Py_SetPythonHome(PythonHome)
 }
 
 // SaveThreadState is a wrapper around the Python C-API PyEval_SaveThread

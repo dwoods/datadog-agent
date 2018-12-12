@@ -135,3 +135,4 @@ core,k8s.io/apiextensions-apiserver,Apache-2.0
 core,github.com/docker/spdystream,Apache-2.0
 core,gopkg.in/square/go-jose.v2,Apache-2.0
 core,github.com/opencontainers/go-digest,Apache-2.0
+core,github.com/DataDog/go-python3,WIP

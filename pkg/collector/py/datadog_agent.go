@@ -130,7 +130,7 @@ func GetConfig(key *C.char) *C.PyObject {
 		return C._none()
 	}
 	// converting type *python.C.struct__object to *C.struct__object
-	return (*C.PyObject)(unsafe.Pointer(pyValue.GetCPointer()))
+	return (*C.PyObject)(unsafe.Pointer(pyValue))
 }
 
 // LogMessage logs a message from python through the agent logger (see

@@ -98,14 +98,14 @@ func (sl *stickyLock) getPythonError() (string, error) {
 	// Make sure exception values are normalized, as per python C API docs. No error to handle here
 	python.PyErr_NormalizeException(ptype, pvalue, ptraceback)
 
-	if ptraceback != nil && ptraceback.GetCPointer() != nil {
+	if ptraceback != nil {
 		// There's a traceback, try to format it nicely
 		traceback := python.PyImport_ImportModule("traceback")
 		defer traceback.DecRef()
 		formatExcFn := traceback.GetAttrString("format_exception")
 		if formatExcFn != nil {
 			defer formatExcFn.DecRef()
-			pyFormattedExc := formatExcFn.CallFunction(ptype, pvalue, ptraceback)
+			pyFormattedExc := formatExcFn.CallFunctionObjArgs(ptype, pvalue, ptraceback)
 			if pyFormattedExc != nil {
 				defer pyFormattedExc.DecRef()
 
@@ -123,7 +123,7 @@ func (sl *stickyLock) getPythonError() (string, error) {
 	}
 
 	// we sometimes do not get a traceback but an error in pvalue
-	if pvalue != nil && pvalue.GetCPointer() != nil {
+	if pvalue != nil {
 		strPvalue := pvalue.Str()
 		if strPvalue != nil {
 			defer strPvalue.DecRef()
@@ -161,10 +161,10 @@ func findSubclassOf(base, module *python.PyObject, gstate *stickyLock) (*python.
 		return nil, fmt.Errorf("%s is not a Module object", python.PyUnicode_AsUTF8(module.Str()))
 	}
 
-	dir := module.PyObject_Dir()
+	dir := module.Dir()
 	defer dir.DecRef()
 	var class *python.PyObject
-	for i := 0; i < python.PyList_GET_SIZE(dir); i++ {
+	for i := 0; i < python.PyList_Size(dir); i++ {
 		symbolName := python.PyUnicode_AsUTF8(python.PyList_GetItem(dir, i))
 		class = module.GetAttrString(symbolName) // new ref, don't DecRef because we return it (caller is owner)
 
@@ -206,7 +206,7 @@ func findSubclassOf(base, module *python.PyObject, gstate *stickyLock) (*python.
 			return nil, errors.New(pyErr)
 		}
 
-		subclassesCount := python.PyList_GET_SIZE(subclasses)
+		subclassesCount := python.PyList_Size(subclasses)
 		subclasses.DecRef()
 
 		// `class` has subclasses but checks are supposed to have none, ignore
@@ -287,7 +287,7 @@ func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
 
 	myPythonStats := []*PythonStats{}
 	var entry *python.PyObject
-	for i := 0; i < python.PyList_GET_SIZE(keys); i++ {
+	for i := 0; i < python.PyList_Size(keys); i++ {
 		entryName := python.PyUnicode_AsUTF8(python.PyList_GetItem(keys, i))
 		entry = python.PyDict_GetItemString(stats, entryName)
 		if entry == nil {
@@ -330,8 +330,8 @@ func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
 
 		pyStat := &PythonStats{
 			Type:     entryName,
-			NObjects: python.PyInt_AsLong(n),
-			Size:     python.PyInt_AsLong(sz),
+			NObjects: python.PyLong_AsLong(n),
+			Size:     python.PyLong_AsLong(sz),
 			Entries:  []*PythonStatsEntry{},
 		}
 
@@ -340,7 +340,7 @@ func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
 			continue
 		}
 
-		for i := 0; i < python.PyList_GET_SIZE(entries); i++ {
+		for i := 0; i < python.PyList_Size(entries); i++ {
 			ref := python.PyList_GetItem(entries, i)
 			if ref == nil {
 				pyErr, err := glock.getPythonError()
@@ -395,8 +395,8 @@ func GetPythonInterpreterMemoryUsage() ([]*PythonStats, error) {
 
 			pyEntry := &PythonStatsEntry{
 				Reference: python.PyUnicode_AsUTF8(obj),
-				NObjects:  python.PyInt_AsLong(nEntry),
-				Size:      python.PyInt_AsLong(szEntry),
+				NObjects:  python.PyLong_AsLong(nEntry),
+				Size:      python.PyLong_AsLong(szEntry),
 			}
 			pyStat.Entries = append(pyStat.Entries, pyEntry)
 		}
