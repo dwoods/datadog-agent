@@ -51,9 +51,9 @@ func TestFindSubclassOf(t *testing.T) {
 	gstate := newStickyLock()
 	defer gstate.unlock()
 
-	fooModule := python.PyImport_ImportModuleNoBlock("foo")
+	fooModule := python.PyImport_ImportModule("foo")
 	fooClass := fooModule.GetAttrString("Foo")
-	barModule := python.PyImport_ImportModuleNoBlock("bar")
+	barModule := python.PyImport_ImportModule("bar")
 	barClass := barModule.GetAttrString("Bar")
 
 	// invalid input
@@ -80,9 +80,9 @@ func TestFindSubclassOf(t *testing.T) {
 	assert.Equal(t, 1, sclass.RichCompareBool(barClass, python.Py_EQ))
 
 	// Multiple inheritance test
-	multiBaseModule := python.PyImport_ImportModuleNoBlock("testcheck_multi_base")
+	multiBaseModule := python.PyImport_ImportModule("testcheck_multi_base")
 	baseCheckClass := multiBaseModule.GetAttrString("BaseClass")
-	multiModule := python.PyImport_ImportModuleNoBlock("testcheck_multi")
+	multiModule := python.PyImport_ImportModule("testcheck_multi")
 	derivedCheckClass := multiModule.GetAttrString("DerivedCheck")
 	sclass, err = findSubclassOf(baseCheckClass, multiModule, gstate)
 	require.Nil(t, err)
@@ -93,7 +93,7 @@ func TestSubprocessBindings(t *testing.T) {
 	gstate := newStickyLock()
 	defer gstate.unlock()
 
-	utilModule := python.PyImport_ImportModuleNoBlock("_util")
+	utilModule := python.PyImport_ImportModule("_util")
 	assert.NotNil(t, utilModule)
 	defer utilModule.DecRef()
 

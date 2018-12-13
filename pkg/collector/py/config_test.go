@@ -51,7 +51,7 @@ func TestToPython(t *testing.T) {
 		t.Fatalf("Result is not a Python dict")
 	}
 
-	m := python.PyImport_ImportModuleNoBlock("tests.complex")
+	m := python.PyImport_ImportModule("tests.complex")
 	if m == nil {
 		t.Fatalf("Unable to import module complex.py")
 	}
@@ -308,8 +308,8 @@ func TestMapElem(t *testing.T) {
 	}
 
 	pkey := python.PyUnicode_FromString(w.lastKey)
-	ok, _ := python.PyDict_Contains(w.currentContainer, pkey)
-	if !ok {
+	found := python.PyDict_Contains(w.currentContainer, pkey)
+	if found != 1 {
 		t.Fatalf("Key not found in dictionary")
 	}
 }

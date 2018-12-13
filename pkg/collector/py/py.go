@@ -129,7 +129,7 @@ func setPythonHome() {
 
 	if runtime.GOOS == "windows" {
 		// on windows, override the hardcoded path set during compile time, but only if that path points to nowhere
-		if _, err := os.Stat(filepath.Join(pythonHome, "lib", "python2.7")); os.IsNotExist(err) {
+		if _, err := os.Stat(filepath.Join(pythonHome, "lib", "python3.7")); os.IsNotExist(err) {
 			pythonHome = _here
 		}
 	}
