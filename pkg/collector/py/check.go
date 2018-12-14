@@ -175,10 +175,6 @@ func (c *PythonCheck) getPythonWarnings(gstate *stickyLock) []error {
 // this code, please ensure the Python thread unlock is always at the bottom
 // of  the defer calls stack.
 func (c *PythonCheck) getInstance(args, kwargs *python.PyObject) (*python.PyObject, error) {
-	// Lock the GIL and release it at the end
-	gstate := newStickyLock()
-	defer gstate.unlock()
-
 	if args == nil {
 		args = python.PyTuple_New(0)
 		defer args.DecRef()
@@ -254,6 +250,10 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 		log.Errorf("Error parsing python check configuration: %v", err)
 		return err
 	}
+
+	// Lock the GIL and release it at the end
+	gstate := newStickyLock()
+	defer gstate.unlock()
 
 	// try getting an instance with the new style api, without passing agentConfig
 	instance, err := c.getInstance(nil, kwargs) // don't `DecRef` instance since we keep it around in c.instance
