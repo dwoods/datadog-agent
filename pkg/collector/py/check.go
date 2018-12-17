@@ -59,11 +59,9 @@ func (c *PythonCheck) Run() error {
 	gstate := newStickyLock()
 	defer gstate.unlock()
 
-	// call run function, it takes no args so we pass an empty tuple
 	log.Debugf("Running python check %s %s", c.ModuleName, c.id)
-	emptyTuple := python.PyTuple_New(0)
-	defer emptyTuple.DecRef()
-	result := c.instance.CallMethodArgs("run", emptyTuple)
+
+	result := c.instance.CallMethodArgs("run")
 	log.Debugf("Run returned for %s %s", c.ModuleName, c.id)
 	if result == nil {
 		pyErr, err := gstate.getPythonError()
@@ -98,10 +96,8 @@ func (c *PythonCheck) RunSimple() error {
 	defer gstate.unlock()
 
 	log.Debugf("Running python check %s %s", c.ModuleName, c.id)
-	emptyTuple := python.PyTuple_New(0)
-	defer emptyTuple.DecRef()
 
-	result := c.instance.CallMethodArgs("run", emptyTuple)
+	result := c.instance.CallMethodArgs("run")
 	log.Debugf("Run returned for %s %s", c.ModuleName, c.id)
 	if result == nil {
 		pyErr, err := gstate.getPythonError()
@@ -146,9 +142,7 @@ func (c *PythonCheck) getPythonWarnings(gstate *stickyLock) []error {
 	This function must be run before the GIL is unlocked, otherwise it will return nothing.
 	**/
 	warnings := []error{}
-	emptyTuple := python.PyTuple_New(0)
-	defer emptyTuple.DecRef()
-	ws := c.instance.CallMethodArgs("get_warnings", emptyTuple)
+	ws := c.instance.CallMethodArgs("get_warnings")
 	if ws == nil {
 		pyErr, err := gstate.getPythonError()
 		if err != nil {
@@ -174,7 +168,7 @@ func (c *PythonCheck) getPythonWarnings(gstate *stickyLock) []error {
 // This function contains deferred calls to go-python: when you change
 // this code, please ensure the Python thread unlock is always at the bottom
 // of  the defer calls stack.
-func (c *PythonCheck) getInstance(args, kwargs *python.PyObject) (*python.PyObject, error) {
+func (c *PythonCheck) getInstance(args, kwargs *python.PyObject, gstate *stickyLock) (*python.PyObject, error) {
 	if args == nil {
 		args = python.PyTuple_New(0)
 		defer args.DecRef()
@@ -256,7 +250,7 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 	defer gstate.unlock()
 
 	// try getting an instance with the new style api, without passing agentConfig
-	instance, err := c.getInstance(nil, kwargs) // don't `DecRef` instance since we keep it around in c.instance
+	instance, err := c.getInstance(nil, kwargs, gstate) // don't `DecRef` instance since we keep it around in c.instance
 	if err != nil {
 		log.Warnf("could not get a check instance with the new api: %s", err)
 		log.Warn("trying to instantiate the check with the old api, passing agentConfig to the constructor")
@@ -279,7 +273,7 @@ func (c *PythonCheck) Configure(data integration.Data, initConfig integration.Da
 		gstate.unlock()
 
 		// ...and retry to get an instance
-		instance, err = c.getInstance(nil, kwargs)
+		instance, err = c.getInstance(nil, kwargs, gstate)
 		if err != nil {
 			return fmt.Errorf("could not invoke python check constructor: %s", err)
 		}
