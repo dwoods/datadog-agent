@@ -14,10 +14,13 @@ import (
 	"os"
 
 	"github.com/DataDog/datadog-agent/cmd/agent/app"
+	reaper "github.com/ramr/go-reaper"
 )
 
 func main() {
 	// Invoke the Agent
+	go reaper.Reap()
+
 	if err := app.AgentCmd.Execute(); err != nil {
 		os.Exit(-1)
 	}
